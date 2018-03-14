@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">	
+	<style type="text/css">
+	<!--
+	label {    
+		display: block;
+    	margin-bottom: 10px;
+	}
+	div.buttons {
+		text-align: center;
+	}
+	input#txt_url{
+	    width: 350px;
+	}
+	-->
+	</style>
+
+</head>
+<body>
+<label>
+  <input type="checkbox" id="chk_auto">
+  自動検索
+</label>
+<label>
+  URL（正規表現）
+  <input type="text" id="txt_url">
+</label>
+<label>
+  imgタグ(jqueryセレクター)
+  $("<input type="text" id="txt_img_selecter">")
+</label>
+<label>
+  <input type="checkbox" id="chk_invarted">
+  画像反転での検索
+</label>
+<label>
+  <input type="checkbox" id="chk_gray">
+  グレースケールでの検索する	
+</label>
+<label>
+  <input type="checkbox" id="chk_both">
+  画像反転&amp;グレースケールでの検索する	
+</label>
+<div class="buttons">
+<button id="save">Save</button>
+<button id="reset">初期設定に戻す</button>
+</div>
+<script src="jquery.js"></script>
+<script src="options.js"></script>
+</body>
+</html>
