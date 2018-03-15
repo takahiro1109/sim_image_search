@@ -2,7 +2,7 @@
   "name": "類似画像検索",
   "short_name":"sim image search",
   "description" : "反転、グレースケール画像を作成して検索します。",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "browser_action":{
     "default_icon":"default_icon.png",
     "default_popup":"popup.html"

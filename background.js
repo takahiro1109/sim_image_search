@@ -167,44 +167,56 @@
 	function saveOption(options){
 		localStorage.setItem("options",JSON.stringify(options));
 	}
-	chrome.contextMenus.onClicked.addListener(onClickHandler);
+	function checkStartUpTab(){
+		chrome.tabs.query({active:true,lastFocusedWindow:true},function(tabs){
+			if(tabs[0].status == 'complete'){
+				execAutoSearch(tabs[0].id);
+			}
+		});
+	}
+	function execAutoSearch(tabId){
+		var options = getOptions();
+		if(options.auto != true){
+			return;
+		}
+		if(options.url.length == 0 || options.img_selecter.length == 0){
+			return;
+		}			
+		chrome.tabs.get(tabId,function(tab){
+			var reg = new RegExp(options.url);
+			var url = tab.url;
+			if(url.match(reg)){
+				chrome.tabs.executeScript(tab.id,{code:"window.IMG_SELECTER='"+options.img_selecter+"';"})
+				chrome.tabs.executeScript(tab.id,{file:"jquery.js"});
+				chrome.tabs.executeScript(tab.id,{file:"content.js"});
+			}
+		});
 
-
-	chrome.runtime.onInstalled.addListener(function () {
+	}
+	function onStartUp(){
     	chrome.contextMenus.create({
         	type: 'normal',
         	id: 'create_search_image',
         	title: '類似画像検索',
         	contexts:["image"]
-    	});
-	});
-	chrome.extension.onRequest.addListener(
-		function(request,sender,sendRespoinse){
-			searchImage(request.src);
-
-	});
-	chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab){
-		if(changeInfo.status == 'complete'){
-			var options = getOptions();
-			if(options.auto != true){
-				return;
+    	});		
+		chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab){
+			if(changeInfo.status == 'complete'){
+				execAutoSearch(tabId);
 			}
-			if(options.url.length == 0 || options.img_selecter.length == 0){
-				return;
-			}			
-			chrome.tabs.get(tabId,function(tab){
-				var reg = new RegExp(options.url);
-				var url = tab.url;
-				if(url.match(reg)){
-					chrome.tabs.executeScript(tab.id,{code:"window.IMG_SELECTER='"+options.img_selecter+"';"})
-					chrome.tabs.executeScript(tab.id,{file:"jquery.js"});
-					chrome.tabs.executeScript(tab.id,{file:"content.js"});
-				}
-			});
-		}
+		});
+		chrome.extension.onRequest.addListener(
+			function(request,sender,sendRespoinse){
+				searchImage(request.src);
 
-	});
+		});
+		chrome.contextMenus.onClicked.addListener(onClickHandler);
 
+		checkStartUpTab();
+
+	}
+	chrome.runtime.onInstalled.addListener(onStartUp);
+	chrome.runtime.onStartup.addListener(onStartUp);
 //	var img = $("img");
 //	if(img.length == 1){
 //		var imgSrc = img.attr("src");
